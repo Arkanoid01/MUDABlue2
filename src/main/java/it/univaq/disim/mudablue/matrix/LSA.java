@@ -20,8 +20,6 @@ public class LSA {
 		RealMatrix Vt = svd.getVT();
 		
 		RealMatrix Saux =  MatrixUtils.createRealMatrix(S.getRowDimension(), S.getColumnDimension());
-		//RealMatrix Uaux =  MatrixUtils.createRealMatrix(U.getRowDimension(), U.getColumnDimension());
-		//RealMatrix Vtaux =  MatrixUtils.createRealMatrix(Vt.getRowDimension(), Vt.getColumnDimension());
 		
 		
 		int value=columnDimension/2;
@@ -35,16 +33,6 @@ public class LSA {
 		
 		for(int i=0; i<=value; i = i+1)
 		{
-				
-				/*if(i<Uaux.getColumnDimension())
-				{
-					Uaux.setColumnMatrix(i, U.getColumnMatrix(i));
-				}
-				
-				if(i<Vtaux.getRowDimension())
-				{
-					Vtaux.setRowMatrix(i, Vt.getRowMatrix(i));
-				}*/
 				
 				if(i<Saux.getRowDimension())
 				{

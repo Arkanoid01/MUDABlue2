@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import it.univaq.disim.crossminer.mudablue.githubdownload.GitHubRepositoryManager;
-import it.univaq.disim.mudablue.scan.ListManager;
 
 public class MainDownload {
 

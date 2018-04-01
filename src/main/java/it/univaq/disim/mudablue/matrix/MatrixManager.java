@@ -2,8 +2,13 @@ package it.univaq.disim.mudablue.matrix;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -16,43 +21,63 @@ import it.univaq.disim.mudablue.scan.FolderNavigator;
 
 public class MatrixManager {
 
-	public RealMatrix createMatrix (ArrayList<ArrayList<Double>> occurrencies_list)
+	public RealMatrix createMatrix () throws IOException
 	{
-		int max = 0;
-		for(ArrayList elem : occurrencies_list)
-		{
-			if(max <= elem.size())
-			{
-				max = elem.size();
-			}
-			
-		}
-		/*
-		 * conversione nei formati real matrix
-		 */
+	    Scanner scan;
+	    
+		File folder_path = new File("results/");
+		File[] listOfFiles = folder_path.listFiles();
 		
-		//RealMatrix m = MatrixUtils.createRealMatrix(occurrencies_list.get(occurrencies_list.size()).size(),occurrencies_list.size());
-		RealMatrix m = MatrixUtils.createRealMatrix(max,occurrencies_list.size());
+		/*
+		 * numero di termini
+		 */
+		List<String> lines = Files.readAllLines(Paths.get("results/mainList.txt"),Charset.forName("UTF-8"));
+		//int max = 902851;
+		//int max = 737710;
+		int max=lines.size();
+		RealMatrix m = MatrixUtils.createRealMatrix(max,listOfFiles.length-1);
 
 		int rowCounter=0;
-		for(ArrayList elem : occurrencies_list)
+		for(File elem:listOfFiles)
 		{
-			//RealVector vector = new ArrayRealVector(elem.size());
-			RealVector vector = new ArrayRealVector(max);
-			for(int i=0; i<elem.size();i++)
+			if(elem.toString().indexOf("mainList.txt")==-1)
 			{
-				vector.setEntry(i, (double) elem.get(i));
+				RealVector vector = new ArrayRealVector(max);
+			    try 
+			    {
+			        scan = new Scanner(elem);
+			        int i=0;
+			        
+			        while(scan.hasNext())
+			        {
+			        	double var = Double.parseDouble(scan.next());
+			        	vector.setEntry(i, var);
+			        	i+=1;
+			        }
+		
+			    } 
+		    
+		    catch (FileNotFoundException e1) 
+		    {
+		            e1.printStackTrace();
+		    }
+		    	System.out.println("loading: "+rowCounter);
+				
+				m.setColumnVector(rowCounter, vector);
+				rowCounter++;
+		    
 			}
-			m.setColumnVector(rowCounter, vector);
-			rowCounter++;
+			
+			else
+			{
+				continue;
+			}
 		}
 		
-		//try liberare memoria
-		occurrencies_list = null;
 		return m;
 	}
 	
-	public ArrayList<ArrayList<Double>> createFiles(ArrayList<String> path_list) throws FileNotFoundException
+	public void createFiles(ArrayList<String> path_list) throws FileNotFoundException
 	{
 		Row row = new Row();
 		Repositories repository_object = new Repositories();
@@ -110,39 +135,6 @@ public class MatrixManager {
 			ps.close();
 			}
 		}
-		
-	    Scanner scan;
-	    
-		File folder_path = new File("results/");
-		File[] listOfFiles = folder_path.listFiles();
-		ArrayList<ArrayList<Double>> occurrencies_list = new ArrayList<ArrayList<Double>>();
-		
-		for(File elem:listOfFiles)
-		{
-			if(elem.toString().indexOf("mainList.txt")==-1)
-			{
-				//System.out.println(elem.toString());
-			ArrayList<Double> ol = new ArrayList<Double>();
-		    try {
-		        scan = new Scanner(elem);
-		        while(scan.hasNext())
-		        {
-		        	double var = Double.parseDouble(scan.next());
-		            ol.add(var);
-		        }
-	
-		    } catch (FileNotFoundException e1) {
-		            e1.printStackTrace();
-		    }
-		    occurrencies_list.add(ol);
-			}
-			else
-			{
-				continue;
-			}
-		}
-		
-		return occurrencies_list;
 
 	}
 
